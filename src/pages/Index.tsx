@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import TravelForm from '@/components/TravelForm';
 import TravelItinerary from '@/components/TravelItinerary';
@@ -8,8 +9,8 @@ import { useTravelPlanner } from '@/hooks/useTravelPlanner';
 import { TravelPlannerResult } from '@/utils/gemini';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Key } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [travelPlanResult, setTravelPlanResult] = useState<TravelPlannerResult | null>(null);
@@ -44,7 +45,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <Navbar apiKey={apiKey} updateApiKey={updateApiKey} />
+      
       <HeroSection 
         title="Your AI Travel Planner" 
         subtitle="Tell us where you want to go, and we'll create a personalized travel itinerary just for you." 
@@ -58,12 +61,11 @@ const Index = () => {
           className="max-w-4xl mx-auto"
         >
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-travel-900 mb-4">
               Plan Your Perfect Trip
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Enter your travel details below and our AI will generate a customized itinerary based on your preferences, 
-              including activities, accommodations, and transportation options.
+            <p className="text-travel-600 max-w-2xl mx-auto">
+              Enter your travel details below and our AI will generate a customized itinerary based on your preferences.
             </p>
           </div>
           
@@ -84,26 +86,28 @@ const Index = () => {
             </div>
           )}
           
-          <TravelForm 
-            onSubmit={handleGeneratePlan}
-            apiKey={apiKey}
-            onApiKeyChange={updateApiKey}
-            isLoading={isLoading}
-          />
+          <div className="glass-card bg-white/80 shadow-xl rounded-xl overflow-hidden border border-travel-100">
+            <TravelForm 
+              onSubmit={handleGeneratePlan}
+              apiKey={apiKey}
+              onApiKeyChange={updateApiKey}
+              isLoading={isLoading}
+            />
+          </div>
         </motion.div>
         
         {isLoading && (
           <div className="max-w-4xl mx-auto mt-12">
-            <div className="glass-card rounded-xl p-6">
+            <div className="glass-card rounded-xl p-6 bg-white/70">
               <div className="flex items-center justify-center py-12">
                 <div className="space-y-6 w-full max-w-md">
-                  <div className="h-6 bg-gray-200 rounded-md loading-shimmer"></div>
-                  <div className="h-32 bg-gray-200 rounded-md loading-shimmer"></div>
+                  <div className="h-6 bg-travel-100 rounded-md loading-shimmer"></div>
+                  <div className="h-32 bg-travel-100 rounded-md loading-shimmer"></div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="h-16 bg-gray-200 rounded-md loading-shimmer"></div>
-                    <div className="h-16 bg-gray-200 rounded-md loading-shimmer"></div>
+                    <div className="h-16 bg-travel-100 rounded-md loading-shimmer"></div>
+                    <div className="h-16 bg-travel-100 rounded-md loading-shimmer"></div>
                   </div>
-                  <div className="h-24 bg-gray-200 rounded-md loading-shimmer"></div>
+                  <div className="h-24 bg-travel-100 rounded-md loading-shimmer"></div>
                 </div>
               </div>
             </div>
@@ -114,14 +118,16 @@ const Index = () => {
           <div id="results" className="mt-16">
             <Separator className="my-8" />
             <div className="text-center mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-travel-900 mb-4">
                 Your Personalized Travel Plan
               </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <p className="text-travel-600 max-w-2xl mx-auto">
                 Here's your AI-generated travel itinerary based on your preferences. Enjoy your trip!
               </p>
             </div>
-            <TravelItinerary data={travelPlanResult} />
+            <div className="glass-card bg-white/80 rounded-xl overflow-hidden border border-travel-100 shadow-xl">
+              <TravelItinerary data={travelPlanResult} />
+            </div>
           </div>
         )}
       </div>

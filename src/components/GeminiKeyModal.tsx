@@ -29,15 +29,15 @@ const GeminiKeyModal: React.FC<GeminiKeyModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white/95 backdrop-blur-lg border border-travel-100">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-travel-700">
             <Key className="h-5 w-5 text-travel-500" />
             Gemini API Key
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-travel-600">
             Enter your Gemini API key to use the AI travel planner.
-            You can get one from <a href="https://ai.google.dev/" target="_blank" rel="noopener noreferrer" className="text-travel-500 hover:underline">Google AI Studio</a>.
+            You can get one from <a href="https://ai.google.dev/" target="_blank" rel="noopener noreferrer" className="text-travel-500 hover:underline font-medium">Google AI Studio</a>.
           </DialogDescription>
         </DialogHeader>
 
@@ -51,12 +51,13 @@ const GeminiKeyModal: React.FC<GeminiKeyModalProps> = ({
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="Enter your Gemini API key"
-                className="flex-1"
+                className="flex-1 border-travel-200 focus-visible:ring-travel-400"
               />
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => setShowKey(!showKey)}
+                className="border-travel-200 hover:bg-travel-50"
               >
                 {showKey ? "Hide" : "Show"}
               </Button>
@@ -68,10 +69,10 @@ const GeminiKeyModal: React.FC<GeminiKeyModalProps> = ({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="border-travel-200 hover:bg-travel-50">
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!apiKey.trim()}>
+          <Button onClick={handleSave} disabled={!apiKey.trim()} className="bg-travel-500 hover:bg-travel-600">
             Save API Key
           </Button>
         </DialogFooter>
