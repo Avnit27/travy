@@ -142,9 +142,12 @@ export const generateTravelPlan = async (
     // Extract the text from the response
     const text = data.candidates[0].content.parts[0].text;
     
+    // Clean up the text in case it's wrapped in markdown code blocks
+    const cleanedText = text.replace(/```json\n|\n```|```/g, '').trim();
+    
     // Parse the JSON response
     try {
-      return JSON.parse(text);
+      return JSON.parse(cleanedText);
     } catch (error) {
       console.error('Error parsing JSON from Gemini response:', error);
       throw new Error('Invalid response format from Gemini API');
