@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Menu, User, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,8 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
-import { GeminiKeyModal } from './GeminiKeyModal';
-import { useState as useHookState } from 'react';
+import GeminiKeyModal from './GeminiKeyModal';
 
 const Navbar: React.FC<{ apiKey: string; updateApiKey: (key: string) => void }> = ({ 
   apiKey, 
