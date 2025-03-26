@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ChevronDown, Calendar as CalendarIcon, X } from 'lucide-react';
+import { ChevronDown, Calendar as CalendarIcon, X, Key } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { TravelPlannerInput } from '@/utils/gemini';
@@ -31,7 +31,6 @@ const TravelForm: React.FC<TravelFormProps> = ({
   const [travelers, setTravelers] = useState(1);
   const [interests, setInterests] = useState<string[]>([]);
   const [currentInterest, setCurrentInterest] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,39 +231,12 @@ const TravelForm: React.FC<TravelFormProps> = ({
               </div>
             )}
           </div>
-          
-          <div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="apiKey" className="text-sm font-medium">
-                Gemini API Key
-              </Label>
-              <button
-                type="button"
-                onClick={() => setShowApiKey(!showApiKey)}
-                className="text-xs text-travel-600 hover:text-travel-800 transition-colors"
-              >
-                {showApiKey ? 'Hide' : 'Show'}
-              </button>
-            </div>
-            <Input
-              id="apiKey"
-              className="travel-input mt-1"
-              type={showApiKey ? 'text' : 'password'}
-              placeholder="Enter your Gemini API key"
-              value={apiKey}
-              onChange={e => onApiKeyChange(e.target.value)}
-              required
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              You need a Google Gemini API key to use this feature.
-            </p>
-          </div>
         </div>
         
         <Button 
           type="submit" 
           className="w-full bg-travel-600 hover:bg-travel-700 transition-all duration-300 transform hover:scale-[1.01]"
-          disabled={isLoading}
+          disabled={isLoading || !apiKey}
         >
           {isLoading ? 'Generating Travel Plan...' : 'Plan My Trip'}
         </Button>

@@ -1,18 +1,34 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HeroSection from '@/components/HeroSection';
 import TravelForm from '@/components/TravelForm';
 import TravelItinerary from '@/components/TravelItinerary';
+import GeminiKeyModal from '@/components/GeminiKeyModal';
 import { useTravelPlanner } from '@/hooks/useTravelPlanner';
 import { TravelPlannerResult } from '@/utils/gemini';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Key } from 'lucide-react';
 
 const Index = () => {
   const [travelPlanResult, setTravelPlanResult] = useState<TravelPlannerResult | null>(null);
   const { isLoading, apiKey, updateApiKey, planTravel } = useTravelPlanner();
+  const [keyModalOpen, setKeyModalOpen] = useState(false);
+
+  // Check if API key is missing and show modal on initial load
+  useEffect(() => {
+    if (!apiKey) {
+      setKeyModalOpen(true);
+    }
+  }, [apiKey]);
 
   const handleGeneratePlan = async (formData: any) => {
+    if (!apiKey) {
+      setKeyModalOpen(true);
+      return;
+    }
+    
     const result = await planTravel(formData);
     if (result) {
       setTravelPlanResult(result);
@@ -50,6 +66,23 @@ const Index = () => {
               including activities, accommodations, and transportation options.
             </p>
           </div>
+          
+          {!apiKey && (
+            <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between">
+              <p className="text-yellow-800 text-sm">
+                You need to set up your Gemini API key to use this feature.
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setKeyModalOpen(true)}
+                className="bg-white"
+              >
+                <Key className="mr-2 h-4 w-4" />
+                Set API Key
+              </Button>
+            </div>
+          )}
           
           <TravelForm 
             onSubmit={handleGeneratePlan}
@@ -92,6 +125,13 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      <GeminiKeyModal 
+        open={keyModalOpen}
+        onOpenChange={setKeyModalOpen}
+        currentApiKey={apiKey}
+        onSave={updateApiKey}
+      />
     </div>
   );
 };
