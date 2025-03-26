@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import TravelForm from '@/components/TravelForm';
 import TravelItinerary from '@/components/TravelItinerary';
+import FlightDetails from '@/components/FlightDetails';
 import GeminiKeyModal from '@/components/GeminiKeyModal';
 import { useTravelPlanner } from '@/hooks/useTravelPlanner';
 import { TravelPlannerResult } from '@/utils/gemini';
@@ -14,7 +15,7 @@ import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [travelPlanResult, setTravelPlanResult] = useState<TravelPlannerResult | null>(null);
-  const { isLoading, apiKey, updateApiKey, planTravel } = useTravelPlanner();
+  const { isLoading, apiKey, updateApiKey, planTravel, flightData } = useTravelPlanner();
   const [keyModalOpen, setKeyModalOpen] = useState(false);
 
   // Check if API key is missing and show modal on initial load
@@ -125,6 +126,13 @@ const Index = () => {
                 Here's your AI-generated travel itinerary based on your preferences. Enjoy your trip!
               </p>
             </div>
+            
+            {flightData && (
+              <div className="glass-card bg-white/80 rounded-xl overflow-hidden border border-travel-100 shadow-xl mb-8">
+                <FlightDetails flightData={flightData} />
+              </div>
+            )}
+            
             <div className="glass-card bg-white/80 rounded-xl overflow-hidden border border-travel-100 shadow-xl">
               <TravelItinerary data={travelPlanResult} />
             </div>

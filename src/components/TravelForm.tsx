@@ -9,9 +9,10 @@ import { ChevronDown, Calendar as CalendarIcon, X, Key } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { TravelPlannerInput } from '@/utils/gemini';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface TravelFormProps {
-  onSubmit: (data: TravelPlannerInput) => void;
+  onSubmit: (data: TravelPlannerInput & { includeFlights?: boolean }) => void;
   apiKey: string;
   onApiKeyChange: (key: string) => void;
   isLoading: boolean;
@@ -31,6 +32,7 @@ const TravelForm: React.FC<TravelFormProps> = ({
   const [travelers, setTravelers] = useState(1);
   const [interests, setInterests] = useState<string[]>([]);
   const [currentInterest, setCurrentInterest] = useState('');
+  const [includeFlights, setIncludeFlights] = useState(false);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +48,8 @@ const TravelForm: React.FC<TravelFormProps> = ({
       endDate: format(endDate, 'yyyy-MM-dd'),
       budget,
       travelers,
-      interests
+      interests,
+      includeFlights
     });
   };
   
@@ -230,6 +233,20 @@ const TravelForm: React.FC<TravelFormProps> = ({
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox 
+              id="includeFlights" 
+              checked={includeFlights}
+              onCheckedChange={(checked) => setIncludeFlights(checked === true)}
+            />
+            <Label 
+              htmlFor="includeFlights" 
+              className="text-sm font-medium cursor-pointer"
+            >
+              Include flight information
+            </Label>
           </div>
         </div>
         
