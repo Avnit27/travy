@@ -6,17 +6,27 @@ import TravelForm from '@/components/TravelForm';
 import TravelItinerary from '@/components/TravelItinerary';
 import FlightDetails from '@/components/FlightDetails';
 import GeminiKeyModal from '@/components/GeminiKeyModal';
+import SerpApiKeyModal from '@/components/SerpApiKeyModal';
 import { useTravelPlanner } from '@/hooks/useTravelPlanner';
 import { TravelPlannerResult } from '@/utils/gemini';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
-import { Key } from 'lucide-react';
+import { Key, Plane } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [travelPlanResult, setTravelPlanResult] = useState<TravelPlannerResult | null>(null);
-  const { isLoading, apiKey, updateApiKey, planTravel, flightData } = useTravelPlanner();
+  const { 
+    isLoading, 
+    apiKey, 
+    serpApiKey, 
+    updateApiKey, 
+    updateSerpApiKey, 
+    planTravel, 
+    flightData 
+  } = useTravelPlanner();
   const [keyModalOpen, setKeyModalOpen] = useState(false);
+  const [serpKeyModalOpen, setSerpKeyModalOpen] = useState(false);
 
   // Check if API key is missing and show modal on initial load
   useEffect(() => {
@@ -29,6 +39,12 @@ const Index = () => {
     if (!apiKey) {
       setKeyModalOpen(true);
       return;
+    }
+    
+    // If including flights but no SerpAPI key, prompt for key
+    if (formData.includeFlights && !serpApiKey) {
+      setSerpKeyModalOpen(true);
+      // Continue anyway with mock data
     }
     
     const result = await planTravel(formData);
@@ -91,7 +107,9 @@ const Index = () => {
             <TravelForm 
               onSubmit={handleGeneratePlan}
               apiKey={apiKey}
+              serpApiKey={serpApiKey}
               onApiKeyChange={updateApiKey}
+              onSerpApiKeyChange={updateSerpApiKey}
               isLoading={isLoading}
             />
           </div>
@@ -145,6 +163,13 @@ const Index = () => {
         onOpenChange={setKeyModalOpen}
         currentApiKey={apiKey}
         onSave={updateApiKey}
+      />
+      
+      <SerpApiKeyModal
+        open={serpKeyModalOpen}
+        onOpenChange={setSerpKeyModalOpen}
+        currentApiKey={serpApiKey}
+        onSave={updateSerpApiKey}
       />
     </div>
   );

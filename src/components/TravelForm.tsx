@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,18 +9,23 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { TravelPlannerInput } from '@/utils/gemini';
 import { Checkbox } from '@/components/ui/checkbox';
+import SerpApiKeyModal from './SerpApiKeyModal';
 
 interface TravelFormProps {
   onSubmit: (data: TravelPlannerInput & { includeFlights?: boolean }) => void;
   apiKey: string;
+  serpApiKey?: string;
   onApiKeyChange: (key: string) => void;
+  onSerpApiKeyChange?: (key: string) => void;
   isLoading: boolean;
 }
 
 const TravelForm: React.FC<TravelFormProps> = ({
   onSubmit,
   apiKey,
+  serpApiKey = '',
   onApiKeyChange,
+  onSerpApiKeyChange,
   isLoading
 }) => {
   const [source, setSource] = useState('');
@@ -33,6 +37,7 @@ const TravelForm: React.FC<TravelFormProps> = ({
   const [interests, setInterests] = useState<string[]>([]);
   const [currentInterest, setCurrentInterest] = useState('');
   const [includeFlights, setIncludeFlights] = useState(false);
+  const [serpApiKeyModalOpen, setSerpApiKeyModalOpen] = useState(false);
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +67,12 @@ const TravelForm: React.FC<TravelFormProps> = ({
   
   const removeInterest = (interest: string) => {
     setInterests(interests.filter(i => i !== interest));
+  };
+
+  const handleSerpApiKeyChange = (key: string) => {
+    if (onSerpApiKeyChange) {
+      onSerpApiKeyChange(key);
+    }
   };
   
   return (
@@ -235,18 +246,48 @@ const TravelForm: React.FC<TravelFormProps> = ({
             )}
           </div>
 
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox 
-              id="includeFlights" 
-              checked={includeFlights}
-              onCheckedChange={(checked) => setIncludeFlights(checked === true)}
-            />
-            <Label 
-              htmlFor="includeFlights" 
-              className="text-sm font-medium cursor-pointer"
-            >
-              Include flight information
-            </Label>
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="includeFlights" 
+                checked={includeFlights}
+                onCheckedChange={(checked) => setIncludeFlights(checked === true)}
+              />
+              <Label 
+                htmlFor="includeFlights" 
+                className="text-sm font-medium cursor-pointer"
+              >
+                Include flight information
+              </Label>
+            </div>
+            
+            {includeFlights && (
+              <div className="ml-6 mt-2 p-3 bg-blue-50 rounded-md border border-blue-100">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-medium">SerpAPI Integration</p>
+                    <p className="text-xs text-muted-foreground">
+                      {!serpApiKey ? 'Set your SerpAPI key to get real flight data' : 'Using real flight data from SerpAPI'}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setSerpApiKeyModalOpen(true)}
+                    className="text-xs px-2 py-1 h-auto"
+                  >
+                    <Key className="mr-1 h-3 w-3" />
+                    {serpApiKey ? 'Update Key' : 'Set Key'}
+                  </Button>
+                </div>
+                
+                {!serpApiKey && includeFlights && (
+                  <div className="mt-2 text-xs text-amber-600">
+                    Note: Without a SerpAPI key, mock flight data will be used.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
         
@@ -258,6 +299,13 @@ const TravelForm: React.FC<TravelFormProps> = ({
           {isLoading ? 'Generating Travel Plan...' : 'Plan My Trip'}
         </Button>
       </form>
+
+      <SerpApiKeyModal
+        open={serpApiKeyModalOpen}
+        onOpenChange={setSerpApiKeyModalOpen}
+        currentApiKey={serpApiKey}
+        onSave={handleSerpApiKeyChange}
+      />
     </div>
   );
 };
